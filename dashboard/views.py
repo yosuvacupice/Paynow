@@ -713,13 +713,19 @@ def send_bank_verification_otp(request):
     request.session['bank_verify_email'] = session_email
     request.session['bank_verify_slug'] = bank_slug
 
-    send_mail(
-        "Your PayNow Bank Verification OTP",
-        f"Your OTP is {otp}. Use it to verify your email before linking your bank account.",
-        settings.EMAIL_HOST_USER,
-        [session_email],
-        fail_silently=False,
-    )
+    if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
+        return JsonResponse({"status": "error", "message": "Email service is not configured."}, status=500)
+
+    try:
+        send_mail(
+            "Your PayNow Bank Verification OTP",
+            f"Your OTP is {otp}. Use it to verify your email before linking your bank account.",
+            settings.EMAIL_HOST_USER,
+            [session_email],
+            fail_silently=False,
+        )
+    except Exception:
+        return JsonResponse({"status": "error", "message": "Unable to send OTP email. Check your email settings."}, status=500)
 
     return JsonResponse({"status": "success", "message": "OTP sent successfully."})
 

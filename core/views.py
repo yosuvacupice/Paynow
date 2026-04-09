@@ -333,13 +333,19 @@ def send_otp(request):
     request.session['otp'] = otp
     request.session['otp_email'] = email
 
-    send_mail(
-        "Your PayNow OTP Code",
-        f"Your OTP is {otp}. It is valid for your current password reset verification.",
-        settings.EMAIL_HOST_USER,
-        [email],
-        fail_silently=False,
-    )
+    if not settings.EMAIL_HOST_USER or not settings.EMAIL_HOST_PASSWORD:
+        return JsonResponse({"status": "error", "message": "Email service is not configured."}, status=500)
+
+    try:
+        send_mail(
+            "Your PayNow OTP Code",
+            f"Your OTP is {otp}. It is valid for your current password reset verification.",
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+    except Exception:
+        return JsonResponse({"status": "error", "message": "Unable to send OTP email. Check your email settings."}, status=500)
 
     return JsonResponse({"status": "success", "message": "OTP sent successfully"})
 
