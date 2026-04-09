@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="dashboard-page qr-page">
+    <div class="dashboard-shell" data-user-authenticated="true" data-bank-linked="true">
+        <div class="dashboard-hero send-money-hero">
+            <div class="dashboard-hero-visual">
+                <div class="dashboard-hero-frame">
+                    <img src="{% static 'images/dashboard_home_image.jpg' %}" alt="UPI QR illustration">
+                </div>
+            </div>
+
+            <aside class="dashboard-sidebar">
+                <h2>UPI</h2>
+
+                <a href="/dashboard/" class="dashboard-side-link">
+                    <i class="ri-bank-line"></i>
+                    <span>Link Bank Account</span>
+                </a>
+                <a href="/dashboard/overview/" class="dashboard-side-link">
+                    <i class="ri-id-card-line"></i>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="/dashboard/send-money/" class="dashboard-side-link">
+                    <i class="ri-send-plane-line"></i>
+                    <span>Send Money</span>
+                </a>
+                <a href="/dashboard/request-money/" class="dashboard-side-link">
+                    <i class="ri-money-rupee-circle-line"></i>
+                    <span>Request Money</span>
+                </a>
+                <a href="/dashboard/view-qr/" class="dashboard-side-link is-active">
+                    <i class="ri-qr-code-line"></i>
+                    <span>View QR Code</span>
+                </a>
+            </aside>
+        </div>
+
+        <section class="qr-main-section">
+            <h1>My QR Code</h1>
+
+            <div class="qr-card">
+                <div class="qr-profile-row">
+                    <img src="{% static 'images/profile.jpg' %}" alt="{{ linked_bank.account_holder_name }}">
+                    <div>
+                        <strong>{{ linked_bank.account_holder_name }}</strong>
+                        <span>{{ linked_bank.upi_id }}</span>
+                    </div>
+                </div>
+
+                <div class="qr-card-grid">
+                    <div class="qr-code-panel">
+                        <h2>View My QR Code</h2>
+                        <img src="{{ qr_image_url }}" alt="QR code for {{ linked_bank.upi_id }}" class="qr-code-image" id="qrCodeImage" crossorigin="anonymous">
+                        <p>{{ linked_bank.upi_id }}</p>
+                        <div class="qr-action-row">
+                            <button type="button" class="qr-action-button" data-qr-download="true" data-qr-image="{{ qr_image_url }}" data-qr-filename="paynow-qr-{{ linked_bank.bank_slug }}.png">
+                                <i class="ri-download-2-line"></i>
+                                <span>Download</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="qr-share-panel">
+                        <button type="button" class="qr-share-bubble" data-qr-share="true" data-qr-image="{{ qr_image_url }}" data-qr-filename="paynow-qr-{{ linked_bank.bank_slug }}.png" data-qr-title="PayNow QR Code">
+                            <i class="ri-share-forward-line"></i>
+                        </button>
+                        <h3>Share others</h3>
+                        <img src="{% static 'images/confirmation_image.png' %}" alt="QR sharing illustration">
+                        <div class="qr-share-copy">
+                            Show this QR code to the sender. They can scan using any UPI-enabled app to send you money.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="send-money-banner qr-banner">
+                <div>
+                    <h2>View QR Code</h2>
+                    <p>View and share your UPI QR code to receive payments instantly and securely.</p>
+                </div>
+
+                <img src="{% static 'images/link_account_image.png' %}" alt="View QR code illustration">
+            </section>
+        </section>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

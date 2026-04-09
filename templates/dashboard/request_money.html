@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="dashboard-page send-money-page">
+    <div class="dashboard-shell" data-user-authenticated="true" data-bank-linked="true">
+        <div class="dashboard-hero send-money-hero">
+            <div class="dashboard-hero-visual">
+                <div class="dashboard-hero-frame">
+                    <img src="{% static 'images/dashboard_home_image.jpg' %}" alt="UPI request money illustration">
+                </div>
+            </div>
+
+            <aside class="dashboard-sidebar">
+                <h2>UPI</h2>
+
+                <a href="/dashboard/" class="dashboard-side-link">
+                    <i class="ri-bank-line"></i>
+                    <span>Link Bank Account</span>
+                </a>
+                <a href="/dashboard/overview/" class="dashboard-side-link">
+                    <i class="ri-id-card-line"></i>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="/dashboard/send-money/" class="dashboard-side-link">
+                    <i class="ri-send-plane-line"></i>
+                    <span>Send Money</span>
+                </a>
+                <a href="/dashboard/request-money/" class="dashboard-side-link is-active">
+                    <i class="ri-money-rupee-circle-line"></i>
+                    <span>Request Money</span>
+                </a>
+                <a href="/dashboard/view-qr/" class="dashboard-side-link">
+                    <i class="ri-qr-code-line"></i>
+                    <span>View QR Code</span>
+                </a>
+            </aside>
+        </div>
+
+        <section class="send-money-layout">
+            <div class="send-money-main-card request-money-main-card">
+                <h1>Enter Recipient Details</h1>
+                <p class="request-money-subcopy">Enter receiver details to request money instantly.</p>
+
+                {% if request_status.message %}
+                    <div class="bank-form-message {{ request_status.type|default:'' }}">
+                        {{ request_status.message }}
+                    </div>
+                {% endif %}
+
+                <form method="post" class="send-money-form">
+                    {% csrf_token %}
+
+                    <div class="send-money-field">
+                        <label for="recipientIdentifier">Enter receiver details</label>
+                        <input
+                            id="recipientIdentifier"
+                            type="text"
+                            name="recipient_identifier"
+                            value="{{ form_values.recipient_identifier|default:'' }}"
+                            placeholder="username@bank or number"
+                            class="{% if form_errors.recipient_identifier %}bank-form-input-error{% endif %}"
+                            data-request-recipient-input="true"
+                            required>
+                        <p class="request-money-selected-name {% if not selected_contact_name %}is-hidden{% endif %}" data-request-recipient-name="true">{{ selected_contact_name }}</p>
+                        {% if form_errors.recipient_identifier %}
+                            <p class="bank-form-field-error">{{ form_errors.recipient_identifier }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="send-money-field">
+                        <label for="requestAmount">Amount</label>
+                        <div class="send-money-input-icon-wrap">
+                            <span class="send-money-currency">Rs.</span>
+                            <input
+                                id="requestAmount"
+                                type="text"
+                                name="amount"
+                                value="{{ form_values.amount|default:'' }}"
+                                placeholder="0.00"
+                                inputmode="decimal"
+                                class="send-money-amount-input {% if form_errors.amount %}bank-form-input-error{% endif %}"
+                                required>
+                        </div>
+                        {% if form_errors.amount %}
+                            <p class="bank-form-field-error">{{ form_errors.amount }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="send-money-field">
+                        <label for="requestNote">Add a note (Optional)</label>
+                        <div class="send-money-input-icon-wrap send-money-note-wrap">
+                            <i class="ri-edit-circle-line"></i>
+                            <input
+                                id="requestNote"
+                                type="text"
+                                name="note"
+                                value="{{ form_values.note|default:'' }}"
+                                placeholder="For dinner last night"
+                                class="{% if form_errors.note %}bank-form-input-error{% endif %}">
+                        </div>
+                        {% if form_errors.note %}
+                            <p class="bank-form-field-error">{{ form_errors.note }}</p>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="send-money-proceed request-money-submit">
+                        <span>Send Request</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </button>
+                </form>
+
+                <div class="request-money-divider"></div>
+
+                <section class="request-money-recent">
+                    <h2>Or select from recent</h2>
+
+                    {% if recent_contacts %}
+                        <div class="request-money-contact-grid">
+                            {% for contact in recent_contacts %}
+                                <button
+                                    type="button"
+                                    class="request-money-contact"
+                                    data-request-recipient="{{ contact.identifier }}"
+                                    data-request-name="{{ contact.name }}">
+                                    <div class="request-money-contact-avatar">
+                                        <img src="{% static 'images/profile.jpg' %}" alt="{{ contact.name }}">
+                                    </div>
+                                    <span>{{ contact.name }}</span>
+                                </button>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="send-money-empty-history">No recent contacts yet.</p>
+                    {% endif %}
+                </section>
+            </div>
+
+            <aside class="send-money-side-card">
+                <h2>Recent Transactions</h2>
+
+                {% if recent_transactions %}
+                    <div class="send-money-history">
+                        {% for item in recent_transactions %}
+                            <div class="send-money-history-item">
+                                <div class="send-money-history-avatar send-money-history-photo">
+                                    <img src="{% static 'images/profile.jpg' %}" alt="{{ item.name }}">
+                                </div>
+                                <div class="send-money-history-copy">
+                                    <strong>{{ item.name }}</strong>
+                                    <span>{{ item.direction_label }}</span>
+                                    <small>{{ item.time_label }}</small>
+                                </div>
+                                <p>Rs. {{ item.amount }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="send-money-empty-history">No recent transactions yet.</p>
+                {% endif %}
+
+                <div class="send-money-side-visual request-money-side-visual">
+                    <h3>Instant &amp; Secure</h3>
+                    <img src="{% static 'images/confirmation_image.png' %}" alt="Secure request illustration">
+                </div>
+            </aside>
+        </section>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

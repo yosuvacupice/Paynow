@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="dashboard-shell" data-user-authenticated="true" data-bank-linked="true">
+        <div class="dashboard-hero">
+            <div class="dashboard-hero-visual">
+                <div class="dashboard-hero-frame">
+                    <img src="{% static 'images/dashboard_home_image.jpg' %}" alt="UPI dashboard overview illustration">
+                </div>
+            </div>
+
+            <aside class="dashboard-sidebar">
+                <h2>UPI</h2>
+
+                <a href="/dashboard/" class="dashboard-side-link">
+                    <i class="ri-bank-line"></i>
+                    <span>Link Bank Account</span>
+                </a>
+                <a href="/dashboard/overview/" class="dashboard-side-link is-active">
+                    <i class="ri-id-card-line"></i>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="/dashboard/send-money/" class="dashboard-side-link">
+                    <i class="ri-send-plane-line"></i>
+                    <span>Send Money</span>
+                </a>
+                <a href="/dashboard/request-money/" class="dashboard-side-link">
+                    <i class="ri-money-rupee-circle-line"></i>
+                    <span>Request Money</span>
+                </a>
+                <a href="/dashboard/view-qr/" class="dashboard-side-link">
+                    <i class="ri-qr-code-line"></i>
+                    <span>View QR Code</span>
+                </a>
+            </aside>
+        </div>
+
+        <section class="dashboard-overview-actions">
+            <a href="/dashboard/send-money/" class="dashboard-overview-action-card">
+                <span class="dashboard-overview-action-icon"><i class="ri-send-plane-line"></i></span>
+                <h3>Send Money</h3>
+                <p>To UPI ID or Bank Account</p>
+            </a>
+            <a href="/dashboard/request-money/" class="dashboard-overview-action-card">
+                <span class="dashboard-overview-action-icon"><i class="ri-money-rupee-circle-line"></i></span>
+                <h3>Request Money</h3>
+                <p>From a contact or UPI ID</p>
+            </a>
+            <a href="/dashboard/link-bank/{{ linked_bank.bank_slug }}/details/" class="dashboard-overview-action-card">
+                <span class="dashboard-overview-action-icon"><i class="ri-bank-line"></i></span>
+                <h3>Link Bank</h3>
+                <p>Add a new bank account</p>
+            </a>
+            <a href="/dashboard/view-qr/" class="dashboard-overview-action-card">
+                <span class="dashboard-overview-action-icon"><i class="ri-qr-code-line"></i></span>
+                <h3>View QR Code</h3>
+                <p>Pay using any QR code</p>
+            </a>
+        </section>
+
+        <section class="dashboard-overview-panel">
+            <div class="dashboard-overview-copy">
+                <h2>UPI Transactions Overview :</h2>
+                <p>Welcome back, here's a summary of your payment activity.</p>
+            </div>
+
+            <div class="dashboard-overview-search">
+                <i class="ri-search-line"></i>
+                <input type="search" id="dashboardOverviewSearch" placeholder="Search for your transaction...">
+            </div>
+
+            <div class="dashboard-overview-metrics">
+                <article class="dashboard-metric-card">
+                    <div class="dashboard-metric-head">
+                        <h3>Total Transactions</h3>
+                        <i class="ri-file-list-3-line"></i>
+                    </div>
+                    <strong id="dashboardMetricCount">0</strong>
+                    <p id="dashboardMetricCountNote">Based on your filtered transactions</p>
+                </article>
+                <article class="dashboard-metric-card">
+                    <div class="dashboard-metric-head">
+                        <h3>Transaction value</h3>
+                        <i class="ri-bank-card-line"></i>
+                    </div>
+                    <strong id="dashboardMetricValue">Rs. 0.00</strong>
+                    <p id="dashboardMetricValueNote">Total value moved</p>
+                </article>
+                <article class="dashboard-metric-card">
+                    <div class="dashboard-metric-head">
+                        <h3>Success Rate %</h3>
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+                    <strong id="dashboardMetricRate">0%</strong>
+                    <p id="dashboardMetricRateNote">Completed payment ratio</p>
+                </article>
+                <article class="dashboard-metric-card">
+                    <div class="dashboard-metric-head">
+                        <h3>Avg.Tnx.Value</h3>
+                        <i class="ri-funds-line"></i>
+                    </div>
+                    <strong id="dashboardMetricAverage">Rs. 0.00</strong>
+                    <p id="dashboardMetricAverageNote">Average value per transaction</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="dashboard-volume-panel">
+            <div class="dashboard-volume-header">
+                <div>
+                    <h2>Transaction Volume</h2>
+                </div>
+
+                <div class="dashboard-volume-profile">
+                    <img src="{% static 'images/profile.jpg' %}" alt="{{ linked_bank.account_holder_name }}">
+                    <div>
+                        <strong>{{ linked_bank.account_holder_name }}</strong>
+                        <span>{{ linked_bank.upi_id }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-volume-toolbar">
+                <div class="dashboard-volume-periods">
+                    <button type="button" class="dashboard-period-button" data-overview-period="day">Day</button>
+                    <button type="button" class="dashboard-period-button is-active" data-overview-period="week">Week</button>
+                    <button type="button" class="dashboard-period-button" data-overview-period="month">Month</button>
+                    <button type="button" class="dashboard-period-button" data-overview-period="year">Year</button>
+                </div>
+
+                <label class="dashboard-overview-calendar">
+                    <span>Choose Calendar</span>
+                    <input type="date" id="dashboardOverviewDate">
+                </label>
+            </div>
+
+                <div class="dashboard-chart-shell">
+                    <div class="dashboard-chart-card">
+                        <div class="dashboard-chart-stage">
+                            <div id="dashboardChartYAxis" class="dashboard-chart-yaxis"></div>
+                            <div id="dashboardChartGrid" class="dashboard-chart-grid"></div>
+                            <svg id="dashboardOverviewChart" viewBox="0 0 1000 320" preserveAspectRatio="none" aria-label="Transaction volume chart">
+                                <path id="dashboardOverviewArea" class="dashboard-chart-area"></path>
+                                <path id="dashboardOverviewLine" class="dashboard-chart-line"></path>
+                        </svg>
+                        <div id="dashboardOverviewPoints" class="dashboard-chart-points"></div>
+                    </div>
+                    <div id="dashboardOverviewXAxis" class="dashboard-chart-xaxis"></div>
+                    <div class="dashboard-chart-summary">
+                        <span id="dashboardChartLegendPrimary">Transaction values by selected period</span>
+                        <strong id="dashboardChartTotal">Total : Rs. 0.00</strong>
+                    </div>
+                </div>
+
+                <div class="dashboard-chart-sidecard">
+                    <div class="dashboard-donut" id="dashboardOverviewDonut"></div>
+                    <div class="dashboard-donut-legend">
+                        <div><span class="dashboard-dot dashboard-dot-blue"></span><strong>Sent</strong><small id="dashboardDonutSent">0 txns</small></div>
+                        <div><span class="dashboard-dot dashboard-dot-green"></span><strong>Received</strong><small id="dashboardDonutReceived">0 txns</small></div>
+                        <div><span class="dashboard-dot dashboard-dot-gold"></span><strong>Total Value</strong><small id="dashboardDonutValue">Rs. 0.00</small></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-recent-panel">
+            <div class="dashboard-recent-panel-head">
+                <h2>Recent Transactions</h2>
+                <p id="dashboardRecentSummary">Filtered by your selected date and search.</p>
+            </div>
+
+            <div class="dashboard-recent-table">
+                <div class="dashboard-recent-table-head">
+                    <span>Recipient/Sender</span>
+                    <span>Date</span>
+                    <span>Amount</span>
+                    <span>Status</span>
+                </div>
+                <div id="dashboardRecentRows" class="dashboard-recent-table-body"></div>
+            </div>
+        </section>
+
+        {{ overview_transactions|json_script:"dashboardOverviewData" }}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

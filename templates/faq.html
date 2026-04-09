@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="faq-page">
+    <div class="faq-shell">
+        <div class="faq-backdrop">
+            <img src="{% static 'images/about_page_iamge.png' %}" alt="FAQ illustration background">
+        </div>
+
+        <div class="faq-list">
+            <details class="faq-card">
+                <summary>
+                    <span>Q1. What is UPI?</span>
+                    <span class="faq-icon"><i class="ri-arrow-down-s-line"></i></span>
+                </summary>
+                <div class="faq-answer">
+                    UPI (Unified Payments Interface) is a real-time payment system that allows you
+                    to send and receive money instantly between bank accounts using a mobile number
+                    or UPI ID, with no need to share bank details.
+                </div>
+            </details>
+
+            <details class="faq-card">
+                <summary>
+                    <span>Q2. How do I link my bank account?</span>
+                    <span class="faq-icon"><i class="ri-arrow-down-s-line"></i></span>
+                </summary>
+                <div class="faq-answer">
+                    Go to "Link Bank Account" in your dashboard, select your bank, verify your
+                    mobile number, and set or enter your UPI PIN. Once verified, your account
+                    will be linked automatically.
+                </div>
+            </details>
+
+            <details class="faq-card">
+                <summary>
+                    <span>Q3. Is UPI safe for online transactions?</span>
+                    <span class="faq-icon"><i class="ri-arrow-down-s-line"></i></span>
+                </summary>
+                <div class="faq-answer">
+                    Yes. UPI is secure, and every transaction is encrypted and verified by your
+                    bank and NPCI. You must enter your UPI PIN for each payment, ensuring only
+                    you can authorize it.
+                </div>
+            </details>
+
+            <details class="faq-card">
+                <summary>
+                    <span>Q4. How can I send money using UPI?</span>
+                    <span class="faq-icon"><i class="ri-arrow-down-s-line"></i></span>
+                </summary>
+                <div class="faq-answer">
+                    Go to "Send Money", enter the receiver's UPI ID or mobile number, or scan
+                    their QR code. Add the amount, confirm using your UPI PIN, and the money will
+                    be transferred instantly.
+                </div>
+            </details>
+
+            <details class="faq-card">
+                <summary>
+                    <span>Q5. How can I request money?</span>
+                    <span class="faq-icon"><i class="ri-arrow-down-s-line"></i></span>
+                </summary>
+                <div class="faq-answer">
+                    Open "Request Money", enter the sender's UPI ID or mobile number, add the
+                    amount, and send the request. The sender will receive a notification to
+                    approve the payment.
+                </div>
+            </details>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll(".faq-card summary").forEach(function(summary) {
+        summary.addEventListener("click", function(event) {
+            event.preventDefault();
+            const card = this.parentElement;
+            const isOpen = card.hasAttribute("open");
+
+            card.toggleAttribute("open", !isOpen);
+        });
+    });
+</script>
+
+{% endblock %}

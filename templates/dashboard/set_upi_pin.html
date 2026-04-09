@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bank-form-page">
+    <div class="bank-form-shell">
+        <div class="bank-form-card bank-form-card-confirm">
+            <div class="bank-form-copy">
+                <h1>Set UPI PIN</h1>
+
+                <form method="post" class="bank-form-grid">
+                    {% csrf_token %}
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="debitCardLast6">Enter Last 6 digits of Debit Card</label>
+                        <input
+                            id="debitCardLast6"
+                            type="password"
+                            name="debit_card_last6"
+                            class="{% if form_errors.debit_card_last6 %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.debit_card_last6|default:'' }}"
+                            placeholder="Enter last 6 digits"
+                            maxlength="6"
+                            minlength="6"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            data-numeric-only="true"
+                            required>
+                        {% if form_errors.debit_card_last6 %}
+                            <p class="bank-form-field-error">{{ form_errors.debit_card_last6 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="expiryDate">Enter Expiry Date</label>
+                        <input
+                            id="expiryDate"
+                            type="text"
+                            name="expiry_date"
+                            class="{% if form_errors.expiry_date %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.expiry_date|default:'' }}"
+                            placeholder="MM/YY"
+                            maxlength="5"
+                            inputmode="numeric"
+                            data-expiry-input="true"
+                            required>
+                        {% if form_errors.expiry_date %}
+                            <p class="bank-form-field-error">{{ form_errors.expiry_date }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="upiId">Create UPI ID</label>
+                        <input
+                            id="upiId"
+                            type="text"
+                            name="upi_id"
+                            class="{% if form_errors.upi_id %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.upi_id|default:'' }}"
+                            placeholder="Enter UPI ID"
+                            required>
+                        {% if form_errors.upi_id %}
+                            <p class="bank-form-field-error">{{ form_errors.upi_id }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="upiPin">Create UPI PIN</label>
+                        <input
+                            id="upiPin"
+                            type="password"
+                            name="upi_pin"
+                            class="{% if form_errors.upi_pin %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.upi_pin|default:'' }}"
+                            placeholder="Enter UPI PIN"
+                            maxlength="6"
+                            minlength="6"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            data-numeric-only="true"
+                            required>
+                        {% if form_errors.upi_pin %}
+                            <p class="bank-form-field-error">{{ form_errors.upi_pin }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="confirmUpiPin">Confirm UPI PIN</label>
+                        <input
+                            id="confirmUpiPin"
+                            type="password"
+                            name="confirm_upi_pin"
+                            class="{% if form_errors.confirm_upi_pin %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.confirm_upi_pin|default:'' }}"
+                            placeholder="Confirm UPI PIN"
+                            maxlength="6"
+                            minlength="6"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            data-numeric-only="true"
+                            required>
+                        {% if form_errors.confirm_upi_pin %}
+                            <p class="bank-form-field-error">{{ form_errors.confirm_upi_pin }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-action-row">
+                        <button type="submit" class="bank-form-action bank-form-action-gold">Confirmation</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bank-form-visual">
+                <img src="{% static 'images/confirmation_image.png' %}" alt="UPI setup illustration">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

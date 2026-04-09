@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bank-verify-page">
+    <div class="bank-verify-shell" data-bank-slug="{{ selected_bank_slug }}">
+        <div class="bank-verify-card">
+            <div class="bank-verify-copy">
+                <p class="bank-verify-kicker">{{ selected_bank_name }}</p>
+                <h1>Verify Email Address</h1>
+                <div id="bankVerifyStatus" class="bank-verify-status" aria-live="polite"></div>
+
+                <label for="bankVerifyEmail">Registered Email Address</label>
+                <input
+                    type="email"
+                    id="bankVerifyEmail"
+                    value="{{ user_email }}"
+                    placeholder="Enter your email address">
+
+                <button type="button" class="bank-verify-action" id="sendBankOtpButton">Send OTP</button>
+
+                <label for="bankVerifyOtp">OTP Verification</label>
+                <div class="bank-verify-otp-row">
+                    <input type="text" id="bankVerifyOtp" maxlength="6" placeholder="Enter OTP" inputmode="numeric" pattern="[0-9]*">
+                </div>
+
+                <button type="button" class="bank-verify-action bank-verify-action-secondary" id="verifyBankOtpButton">Verify OTP</button>
+            </div>
+
+            <div class="bank-verify-visual">
+                <img class="bank-verify-badge" src="{% static 'images/dashboard_home_verify_tick_symbol.png' %}" alt="Verification badge">
+                <p>Secure your account in seconds. Verifying your email keeps your bank linking process safe.</p>
+                <img class="bank-verify-person" src="{% static 'images/dashboard_home_verify_men_image.jpg' %}" alt="Verification illustration">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

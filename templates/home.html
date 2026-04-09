@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<!-- HERO -->
+<section class="hero">
+    <div class="left">
+        <h3>Instant UPI Payments</h3>
+        <h1>The Future of Digital Payments is Here.</h1>
+        <p>Experience fast, secure payments</p>
+        <a href="/dashboard/" class="btn">Get started</a>
+    </div>
+
+    <div class="right">
+        <img src="{% static 'images/home_page_image_1.jpg' %}">
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+    <h2>Everything You Need in a Payment App</h2>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Instant Transfers</h3>
+            <p>Send money anytime</p>
+        </div>
+
+        <div class="card">
+            <h3>Scan & Pay</h3>
+            <p>QR code payments</p>
+        </div>
+
+        <div class="card">
+            <h3>Bill Payments</h3>
+            <p>Recharge & bills</p>
+        </div>
+    </div>
+</section>
+
+<section class="steps">
+    <div class="section-heading">
+        <h2>Get Started in 3 Simple Steps</h2>
+        <p>Making payments has never been this easy. Follow these steps to join the UPI revolution.</p>
+    </div>
+
+    <div class="step-track">
+        <div class="step-item">
+            <div class="step-number">1</div>
+            <h3>Create an Account</h3>
+            <p>Download the app and sign up with your mobile number in minutes.</p>
+        </div>
+
+        <div class="step-item">
+            <div class="step-number">2</div>
+            <h3>Link Your Bank</h3>
+            <p>Securely link your existing bank account using your registered mobile number.</p>
+        </div>
+
+        <div class="step-item">
+            <div class="step-number">3</div>
+            <h3>Start Transacting</h3>
+            <p>You're all set! Send money, pay bills, and shop with ease.</p>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials">
+    <div class="section-heading section-heading-dark">
+        <h2>Loved by Millions of Users</h2>
+        <p>Don't just take our word for it. Here's what our users have to say about PaySwift.</p>
+    </div>
+
+    <div class="testimonial-grid">
+        <article class="testimonial-card">
+            <div class="testimonial-user">
+                <div class="testimonial-avatar">M</div>
+                <div>
+                    <h3>Mike R.</h3>
+                    <span>Small Business Owner</span>
+                </div>
+            </div>
+            <p>"Accepting payments has never been easier. The QR code feature is a game-changer for my coffee shop. Highly recommend it to all business owners."</p>
+        </article>
+
+        <article class="testimonial-card">
+            <div class="testimonial-user">
+                <div class="testimonial-avatar">J</div>
+                <div>
+                    <h3>Jessica P.</h3>
+                    <span>Student</span>
+                </div>
+            </div>
+            <p>"I use PaySwift for everything - from splitting bills with friends to paying my rent. It's secure, reliable, and makes life so much simpler."</p>
+        </article>
+
+        <article class="testimonial-card">
+            <div class="testimonial-user">
+                <div class="testimonial-avatar">S</div>
+                <div>
+                    <h3>Sarah L.</h3>
+                    <span>Freelance Designer</span>
+                </div>
+            </div>
+            <p>"PaySwift has completely changed how I manage my finances. It's incredibly fast and the user interface is so intuitive. A must-have app!"</p>
+        </article>
+
+        <article class="testimonial-card" aria-hidden="true">
+            <div class="testimonial-user">
+                <div class="testimonial-avatar">M</div>
+                <div>
+                    <h3>Mike R.</h3>
+                    <span>Small Business Owner</span>
+                </div>
+            </div>
+            <p>"Accepting payments has never been easier. The QR code feature is a game-changer for my coffee shop. Highly recommend it to all business owners."</p>
+        </article>
+
+        <article class="testimonial-card" aria-hidden="true">
+            <div class="testimonial-user">
+                <div class="testimonial-avatar">J</div>
+                <div>
+                    <h3>Jessica P.</h3>
+                    <span>Student</span>
+                </div>
+            </div>
+            <p>"I use PaySwift for everything - from splitting bills with friends to paying my rent. It's secure, reliable, and makes life so much simpler."</p>
+        </article>
+
+        <article class="testimonial-card" aria-hidden="true">
+            <div class="testimonial-user">
+                <div class="testimonial-avatar">S</div>
+                <div>
+                    <h3>Sarah L.</h3>
+                    <span>Freelance Designer</span>
+                </div>
+            </div>
+            <p>"PaySwift has completely changed how I manage my finances. It's incredibly fast and the user interface is so intuitive. A must-have app!"</p>
+        </article>
+    </div>
+</section>
+
+{% endblock %}

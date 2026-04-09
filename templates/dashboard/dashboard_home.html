@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="dashboard-page">
+    <div class="dashboard-shell" data-user-authenticated="{% if request.session.user_email %}true{% else %}false{% endif %}" data-bank-linked="{% if linked_bank %}true{% else %}false{% endif %}">
+        <div id="dashboardAccessMessage" class="dashboard-access-message {% if dashboard_notice_type == 'error' %}error{% endif %}" aria-live="polite">
+            {% if dashboard_notice_message %}
+                {{ dashboard_notice_message }}
+            {% else %}
+                {{ dashboard_success_message }}
+            {% endif %}
+        </div>
+
+        <form class="dashboard-search" role="search">
+            <i class="ri-search-line"></i>
+            <input type="search" id="dashboardBankSearch" placeholder="Search for your bank...">
+        </form>
+
+        <div class="dashboard-hero">
+            <div class="dashboard-hero-visual">
+                <div class="dashboard-hero-frame">
+                    <img src="{% static 'images/dashboard_home_image.jpg' %}" alt="UPI dashboard illustration">
+                </div>
+            </div>
+
+            <aside class="dashboard-sidebar">
+                <h2>UPI</h2>
+
+                <a href="#" class="dashboard-side-link is-active" data-requires-login="true" data-scroll-target="{% if linked_bank %}dashboardLinkBanner{% else %}dashboardPopularBanks{% endif %}">
+                    <i class="ri-bank-line"></i>
+                    <span>Link Bank Account</span>
+                </a>
+                <a href="/dashboard/overview/" class="dashboard-side-link" data-requires-login="true" {% if not linked_bank %}data-requires-bank-link="true"{% endif %}>
+                    <i class="ri-id-card-line"></i>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="/dashboard/send-money/" class="dashboard-side-link" data-requires-login="true" {% if not linked_bank %}data-requires-bank-link="true"{% endif %}>
+                    <i class="ri-send-plane-line"></i>
+                    <span>Send Money</span>
+                </a>
+                <a href="/dashboard/request-money/" class="dashboard-side-link" data-requires-login="true" {% if not linked_bank %}data-requires-bank-link="true"{% endif %}>
+                    <i class="ri-money-rupee-circle-line"></i>
+                    <span>Request Money</span>
+                </a>
+                <a href="/dashboard/view-qr/" class="dashboard-side-link" data-requires-login="true" {% if not linked_bank %}data-requires-bank-link="true"{% endif %}>
+                    <i class="ri-qr-code-line"></i>
+                    <span>View QR Code</span>
+                </a>
+            </aside>
+        </div>
+
+        {% if linked_bank %}
+            <section class="dashboard-linked-section" id="dashboardLinkedDetails">
+                <h2>Linked Bank Details</h2>
+
+                <div class="dashboard-linked-card">
+                    <div class="dashboard-linked-card-top">
+                        <div class="dashboard-linked-bank">
+                            <div class="dashboard-linked-bank-logo">
+                                <img src="{% static linked_bank.bank_logo %}" alt="{{ linked_bank.bank_name }} logo">
+                            </div>
+                            <h3>{{ linked_bank.bank_name }}</h3>
+                        </div>
+
+                        <p class="dashboard-linked-phone">
+                            Registered Mobile Number:
+                            <span>{{ linked_bank.phone_number }}</span>
+                        </p>
+                    </div>
+
+                    <div class="dashboard-linked-card-body">
+                        <div class="dashboard-linked-column">
+                            <h4>Bank Account Details:</h4>
+                            <p>Bank Name: <span>{{ linked_bank.bank_name }}</span></p>
+                            <p>Account Holder Name: <span>{{ linked_bank.account_holder_name }}</span></p>
+                            <p>Account Number: <span>{{ linked_bank.account_number }}</span></p>
+                            <p>IFSC Code: <span>{{ linked_bank.ifsc_code }}</span></p>
+                            <p>Account Type: <span>{{ linked_bank.account_type }}</span></p>
+                        </div>
+
+                        <div class="dashboard-linked-column">
+                            <h4>UPI Details:</h4>
+                            <p>UPI ID: <span>{{ linked_bank.upi_id }}</span></p>
+                            <p>UPI PIN: <span>{{ linked_bank.upi_pin_masked }}</span></p>
+
+                            <a href="/dashboard/link-bank/{{ linked_bank.bank_slug }}/details/" class="dashboard-linked-edit">
+                                Edit bank details
+                                <i class="ri-arrow-right-line"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-link-banner" id="dashboardLinkBanner">
+                <div class="dashboard-link-banner-copy">
+                    <h3>Link Bank Account</h3>
+                    <p>Securely link your bank account to enable fast and easy UPI transactions.</p>
+                </div>
+
+                <div class="dashboard-link-banner-visual">
+                    <img src="{% static 'images/link_account_image.png' %}" alt="Link account illustration">
+                </div>
+            </section>
+        {% else %}
+            <section class="dashboard-bank-section" id="dashboardPopularBanks">
+                <h2>Popular Banks</h2>
+                <div class="dashboard-popular-grid">
+                    {% for bank in popular_banks %}
+                    <button type="button" class="dashboard-bank-card" data-bank-name="{{ bank.name|lower }}" data-requires-login="true" data-bank-url="/dashboard/link-bank/{{ bank.slug }}/">
+                        <div class="dashboard-bank-logo">
+                            <img src="{% static bank.logo %}" alt="{{ bank.name }} logo">
+                        </div>
+                        <h3>{{ bank.name }}</h3>
+                    </button>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="dashboard-bank-section">
+                <h2>All Banks</h2>
+                <div class="dashboard-bank-list">
+                    {% for bank in all_banks %}
+                    <button type="button" class="dashboard-bank-list-item" data-bank-name="{{ bank.name|lower }}" data-requires-login="true" data-bank-url="/dashboard/link-bank/{{ bank.slug }}/">
+                        <div class="dashboard-bank-logo dashboard-bank-logo-small">
+                            <img src="{% static bank.logo %}" alt="{{ bank.name }} logo">
+                        </div>
+                        <span>{{ bank.name }}</span>
+                    </button>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

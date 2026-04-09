@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bank-form-page">
+    <div class="bank-form-shell">
+        <div class="bank-form-card">
+            <div class="bank-form-copy">
+                <h1>Enter bank account details</h1>
+
+                <form method="post" class="bank-form-grid">
+                    {% csrf_token %}
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="bankName">Bank Name</label>
+                        <input
+                            id="bankName"
+                            type="text"
+                            name="bank_name"
+                            value="{{ selected_bank_name }}"
+                            readonly>
+                    </div>
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="accountHolderName">Account Holder Name</label>
+                        <input
+                            id="accountHolderName"
+                            type="text"
+                            name="account_holder_name"
+                            class="{% if form_errors.account_holder_name %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.account_holder_name|default:'' }}"
+                            placeholder="Enter your account holder name"
+                            minlength="3"
+                            required>
+                        {% if form_errors.account_holder_name %}
+                            <p class="bank-form-field-error">{{ form_errors.account_holder_name }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="accountNumber">Account Number</label>
+                        <input
+                            id="accountNumber"
+                            type="text"
+                            name="account_number"
+                            class="{% if form_errors.account_number %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.account_number|default:'' }}"
+                            placeholder="Enter your bank account number"
+                            minlength="9"
+                            maxlength="18"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            data-numeric-only="true"
+                            required>
+                        {% if form_errors.account_number %}
+                            <p class="bank-form-field-error">{{ form_errors.account_number }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field bank-form-field-full">
+                        <label for="ifscCode">IFSC Code</label>
+                        <input
+                            id="ifscCode"
+                            type="text"
+                            name="ifsc_code"
+                            class="{% if form_errors.ifsc_code %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.ifsc_code|default:'' }}"
+                            placeholder="Enter your IFSC code"
+                            maxlength="11"
+                            style="text-transform: uppercase;"
+                            required>
+                        {% if form_errors.ifsc_code %}
+                            <p class="bank-form-field-error">{{ form_errors.ifsc_code }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field">
+                        <label for="branchName">Branch</label>
+                        <input
+                            id="branchName"
+                            type="text"
+                            name="branch_name"
+                            class="{% if form_errors.branch_name %}bank-form-input-error{% endif %}"
+                            value="{{ form_values.branch_name|default:'' }}"
+                            placeholder="Enter your branch name"
+                            required>
+                        {% if form_errors.branch_name %}
+                            <p class="bank-form-field-error">{{ form_errors.branch_name }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-field">
+                        <label for="accountType">Account Type</label>
+                        <select
+                            id="accountType"
+                            name="account_type"
+                            class="{% if form_errors.account_type %}bank-form-input-error{% endif %}"
+                            required>
+                            <option value="" {% if not form_values.account_type %}selected{% endif %}>Select account type</option>
+                            {% for account_type in account_type_options %}
+                                <option value="{{ account_type }}" {% if form_values.account_type == account_type %}selected{% endif %}>{{ account_type }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form_errors.account_type %}
+                            <p class="bank-form-field-error">{{ form_errors.account_type }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bank-form-action-row">
+                        <button type="submit" class="bank-form-action bank-form-action-gold">Link Account</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bank-form-visual">
+                <img src="{% static 'images/link_account_image.png' %}" alt="Link bank account illustration">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

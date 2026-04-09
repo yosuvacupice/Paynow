@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="dashboard-page send-money-page">
+    <div class="dashboard-shell" data-user-authenticated="true" data-bank-linked="true">
+        <div class="dashboard-hero send-money-hero">
+            <div class="dashboard-hero-visual">
+                <div class="dashboard-hero-frame">
+                    <img src="{% static 'images/dashboard_home_image.jpg' %}" alt="UPI send money illustration">
+                </div>
+            </div>
+
+            <aside class="dashboard-sidebar">
+                <h2>UPI</h2>
+
+                <a href="/dashboard/" class="dashboard-side-link">
+                    <i class="ri-bank-line"></i>
+                    <span>Link Bank Account</span>
+                </a>
+                <a href="/dashboard/overview/" class="dashboard-side-link">
+                    <i class="ri-id-card-line"></i>
+                    <span>Dashboard Overview</span>
+                </a>
+                <a href="/dashboard/send-money/" class="dashboard-side-link is-active">
+                    <i class="ri-send-plane-line"></i>
+                    <span>Send Money</span>
+                </a>
+                <a href="/dashboard/request-money/" class="dashboard-side-link">
+                    <i class="ri-money-rupee-circle-line"></i>
+                    <span>Request Money</span>
+                </a>
+                <a href="/dashboard/view-qr/" class="dashboard-side-link">
+                    <i class="ri-qr-code-line"></i>
+                    <span>View QR Code</span>
+                </a>
+            </aside>
+        </div>
+
+        <section class="send-money-balance-wrap">
+            <button
+                type="button"
+                class="send-money-balance-toggle {% if open_balance_panel or balance_status %}is-open{% endif %}"
+                data-balance-toggle="true"
+                aria-expanded="{% if open_balance_panel or balance_status %}true{% else %}false{% endif %}">
+                <span>View balance</span>
+                <i class="ri-arrow-down-s-line"></i>
+            </button>
+
+            <div class="send-money-pin-panel {% if open_balance_panel or balance_status %}is-open{% endif %}" data-balance-panel="true">
+                <form method="post" class="send-money-pin-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="check_balance">
+
+                    <div class="send-money-pin-head">
+                        <h3>Enter 6 Digits Pin Numbers</h3>
+                    </div>
+
+                    <div class="send-money-pin-field">
+                        <input
+                            type="password"
+                            name="balance_pin"
+                            value="{{ form_values.balance_pin|default:'' }}"
+                            maxlength="6"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            class="{% if form_errors.balance_pin %}bank-form-input-error{% endif %}"
+                            data-numeric-only="true"
+                            placeholder="Enter UPI PIN">
+                        <button type="submit" class="send-money-pin-submit" aria-label="Check balance">
+                            <i class="ri-check-line"></i>
+                        </button>
+                    </div>
+
+                    {% if form_errors.balance_pin %}
+                        <p class="bank-form-field-error">{{ form_errors.balance_pin }}</p>
+                    {% endif %}
+
+                    {% if balance_status.message %}
+                        <p class="send-money-inline-status {{ balance_status.type }}">{{ balance_status.message }}</p>
+                    {% endif %}
+                </form>
+            </div>
+        </section>
+
+        <section class="send-money-layout">
+            <div class="send-money-main-card">
+                <h1>Enter Recipient Details</h1>
+
+                {% if payment_status.message %}
+                    <div class="bank-form-message {{ payment_status.type|default:'' }}">
+                        {{ payment_status.message }}
+                    </div>
+                {% endif %}
+
+                <form method="post" class="send-money-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="send_money">
+
+                    <div class="send-money-field">
+                        <label for="recipientUpiId">Recipient UPI ID</label>
+                        <input
+                            id="recipientUpiId"
+                            type="text"
+                            name="recipient_upi_id"
+                            value="{{ form_values.recipient_upi_id|default:'' }}"
+                            placeholder="someone@bankupi"
+                            class="{% if form_errors.recipient_upi_id %}bank-form-input-error{% endif %}"
+                            required>
+                        {% if form_errors.recipient_upi_id %}
+                            <p class="bank-form-field-error">{{ form_errors.recipient_upi_id }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="send-money-field">
+                        <label for="amount">Amount</label>
+                        <div class="send-money-input-icon-wrap">
+                            <span class="send-money-currency">Rs.</span>
+                            <input
+                                id="amount"
+                                type="text"
+                                name="amount"
+                                value="{{ form_values.amount|default:'' }}"
+                                placeholder="0.00"
+                                inputmode="decimal"
+                                class="send-money-amount-input {% if form_errors.amount %}bank-form-input-error{% endif %}"
+                                required>
+                        </div>
+                        {% if form_errors.amount %}
+                            <p class="bank-form-field-error">{{ form_errors.amount }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="send-money-field">
+                        <label for="note">Add a note (Optional)</label>
+                        <div class="send-money-input-icon-wrap send-money-note-wrap">
+                            <i class="ri-edit-circle-line"></i>
+                            <input
+                                id="note"
+                                type="text"
+                                name="note"
+                                value="{{ form_values.note|default:'' }}"
+                                placeholder="For dinner last night"
+                                class="{% if form_errors.note %}bank-form-input-error{% endif %}">
+                        </div>
+                        {% if form_errors.note %}
+                            <p class="bank-form-field-error">{{ form_errors.note }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="send-money-field">
+                        <label>Pay with</label>
+                        <div class="send-money-pay-with">
+                            <div class="send-money-pay-with-copy">
+                                <i class="ri-bank-card-line"></i>
+                                <div>
+                                    <strong>{{ linked_bank.bank_name }}</strong>
+                                    <span>{{ linked_bank.upi_id }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="send-money-proceed" data-payment-toggle="true">
+                        Proceed to Pay
+                    </button>
+
+                    <div class="send-money-pin-panel send-money-pay-panel {% if open_payment_panel or form_errors.payment_pin or payment_status.type == 'success' %}is-open{% endif %}" data-payment-panel="true">
+                        <div class="send-money-pin-head">
+                            <h3>Enter Your 6 Digit Pin Numbers</h3>
+                        </div>
+
+                        <div class="send-money-pin-field">
+                            <input
+                                type="password"
+                                name="payment_pin"
+                                value="{{ form_values.payment_pin|default:'' }}"
+                                maxlength="6"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                class="{% if form_errors.payment_pin %}bank-form-input-error{% endif %}"
+                                data-numeric-only="true"
+                                placeholder="Enter UPI PIN">
+                            <button type="submit" class="send-money-pin-submit" aria-label="Send money">
+                                <i class="ri-check-line"></i>
+                            </button>
+                        </div>
+
+                        {% if form_errors.payment_pin %}
+                            <p class="bank-form-field-error">{{ form_errors.payment_pin }}</p>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+
+            <aside class="send-money-side-card">
+                <h2>Recent Payments</h2>
+
+                {% if recent_payments %}
+                    <div class="send-money-history">
+                        {% for payment in recent_payments %}
+                            <div class="send-money-history-item">
+                                <div class="send-money-history-avatar">
+                                    {{ payment.recipient_name|slice:":1"|upper }}
+                                </div>
+                                <div class="send-money-history-copy">
+                                    <strong>{{ payment.recipient_name }}</strong>
+                                    <span>{{ payment.time_label }}</span>
+                                    <small>{{ payment.recipient_upi_id }}</small>
+                                </div>
+                                <p>Rs. {{ payment.amount }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="send-money-empty-history">No payments yet. Your recent transfers will show here.</p>
+                {% endif %}
+
+                <div class="send-money-side-visual">
+                    <h3>Instant &amp; Secure</h3>
+                    <img src="{% static 'images/confirmation_image.png' %}" alt="Secure payments illustration">
+                </div>
+            </aside>
+        </section>
+
+        <section class="send-money-banner">
+            <div>
+                <h2>Send Money</h2>
+                <p>Send money instantly and securely using UPI, fast, easy, and reliable.</p>
+            </div>
+
+            <img src="{% static 'images/link_account_image.png' %}" alt="Send money illustration">
+        </section>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

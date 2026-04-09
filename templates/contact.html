@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="contact-page">
+    <div class="contact-shell">
+        <h1 class="contact-title">Contact Us</h1>
+
+        <div class="contact-info-strip">
+            <article class="contact-info-card">
+                <div class="contact-info-heading">
+                    <i class="ri-phone-fill"></i>
+                    <h2>Phone Number :</h2>
+                </div>
+                <p>+91 1800-202-2020</p>
+            </article>
+
+            <article class="contact-info-card">
+                <div class="contact-info-heading">
+                    <i class="ri-mail-fill"></i>
+                    <h2>Email :</h2>
+                </div>
+                <p>support@upipay.in</p>
+            </article>
+
+            <article class="contact-info-card">
+                <div class="contact-info-heading">
+                    <i class="ri-map-pin-2-fill"></i>
+                    <h2>Address :</h2>
+                </div>
+                <p>#45, Tech Park, Bengaluru, India.</p>
+            </article>
+        </div>
+
+        <div class="contact-main-card">
+            <div class="contact-visual">
+                <img src="{% static 'images/contact_page_image.png' %}" alt="Customer support illustration">
+            </div>
+
+            <div class="contact-form-panel">
+                <h2>Send Us a Message</h2>
+
+                {% if messages %}
+                    <div class="contact-messages">
+                    {% for message in messages %}
+                        <p class="contact-message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</p>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form class="contact-form" method="POST">
+                    {% csrf_token %}
+
+                    <label>Name</label>
+                    <input type="text" name="name"
+                        value="{{ user_name }}"
+                        {% if user_name %}readonly{% endif %}
+                        minlength="3"
+                        maxlength="50"
+                        pattern="[A-Za-z][A-Za-z\s]{2,49}"
+                        title="Name must contain letters only"
+                        required>
+
+                    <label>Email</label>
+                    <input type="email" name="email"
+                        value="{{ user_email }}"
+                        {% if user_email %}readonly{% endif %}
+                        required>
+
+                    <label>Message</label>
+                    <textarea name="message" minlength="10" maxlength="500" required></textarea>
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

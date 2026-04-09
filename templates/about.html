@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="about-page">
+    <div class="about-shell">
+        <div class="about-intro">
+            <p class="about-kicker">About Us</p>
+            <h1>Empowering Seamless Digital Payments</h1>
+            <p>
+                At <span>Paynow</span>, we believe that sending and receiving money should be
+                simple, secure, and instant for everyone.
+            </p>
+        </div>
+
+        <section class="about-story">
+            <div class="about-copy">
+                <p class="about-lead">
+                    Our platform is built on the trusted Unified Payments Interface (UPI),
+                    helping you move money faster with a smooth and dependable experience.
+                </p>
+
+                <div class="about-block">
+                    <h2>Our Commitment to Security</h2>
+                    <p>
+                        Your security is our highest priority. Every transaction is protected by
+                        multi-layer encryption and verified by your bank and NPCI, ensuring that
+                        your money and personal data are always safe.
+                    </p>
+                </div>
+
+                <div class="about-block">
+                    <h2>Get in Touch</h2>
+                    <p>
+                        Have questions or need assistance? Reach us at
+                        <a href="mailto:support@upipay.in">support@upipay.in</a>
+                        or visit our Help Center for quick solutions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="about-visual">
+                <div class="about-visual-card">
+                    <img src="{% static 'images/about_page_iamge.png' %}" alt="Digital payments illustration">
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
+
+{% endblock %}

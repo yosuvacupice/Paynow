@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PayNow</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon-32x32.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">Paynow</div>
+
+    <nav>
+        <a href="/" class="{% if page == 'home' and request.session.user_name %}home-active{% endif %}">Home</a>
+        <a href="/dashboard/" class="{% if page == 'dashboard' or page == 'dashboard_overview' or page == 'send_money' or page == 'request_money' or page == 'view_qr_code' %}home-active{% endif %}">Dashboard</a>
+        <a href="/about/" class="{% if page == 'about' %}home-active{% endif %}">About us</a>
+        <a href="/contact/" class="{% if page == 'contact' %}home-active{% endif %}">Contact us</a>
+        <a href="/faq/" class="{% if page == 'faq' %}home-active{% endif %}">FAQS</a>
+    </nav>
+
+    {% if request.session.user_name %}
+    <div class="right-section">
+        <div class="icon" onclick="toggleNotification()">
+            <i class="ri-notification-3-line"></i>
+            {% if header_notification_count %}
+                <span class="notification-badge">{{ header_notification_count }}</span>
+            {% endif %}
+        </div>
+        <a href="/contact/" class="icon" aria-label="Open contact page"><i class="ri-customer-service-2-line"></i></a>
+
+        <div class="profile" onclick="toggleProfile()">
+            <img src="{% static 'images/profile.jpg' %}" width="35">
+            <img src="{% static 'images/user.png' %}" width="35">
+            <div class="profile-meta">
+                <span>{{ request.session.user_name }}</span>
+                <small>{{ request.session.user_email }}</small>
+            </div>
+        </div>
+
+        <div id="profileMenu" class="dropdown">
+            <p>My Profile</p>
+            <a href="/myaccount/">Account settings</a>
+            <a href="/">Home</a>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="/faq/">FAQ</a>
+            <a href="/logout/">Logout</a>
+        </div>
+
+        <div id="notificationBox" class="notification" style="display:none;">
+            <p><b>Payment Requests</b></p>
+            {% if header_notifications %}
+                <div class="notification-list">
+                    {% for item in header_notifications %}
+                        <div class="notification-item">
+                            <div class="notification-copy">
+                                <strong>{{ item.requester_name }}</strong>
+                                <span>requested Rs. {{ item.amount }}</span>
+                                {% if item.note %}
+                                    <small>{{ item.note }}</small>
+                                {% endif %}
+                            </div>
+                            <em>{{ item.time_label }}</em>
+                            <div class="notification-actions">
+                                <a href="/dashboard/send-money/?recipient={{ item.requester_upi_id|urlencode }}&amount={{ item.amount }}" class="notification-pay">Pay</a>
+                                <form method="post" action="/dashboard/requests/{{ item.id }}/decline/" class="notification-decline-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="notification-decline">Decline</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a href="/dashboard/request-money/" class="notification-link">Open Request Money</a>
+            {% else %}
+                <p>No new payment requests.</p>
+            {% endif %}
+        </div>
+
+    </div>
+    {% else %}
+        <button onclick="openRegister()">Register Free</button>
+    {% endif %}
+</header>
+
+{% block content %}{% endblock %}
+
+<!-- REGISTER POPUP -->
+<div id="registerPopup" class="popup">
+    {% if page == 'home' and messages %}
+    <section class="flash-messages" aria-live="polite">
+        {% for message in messages %}
+            <div class="flash-message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+    <button type="button" class="popup-close" onclick="closeRegister()" aria-label="Close register popup">
+        <i class="ri-close-line"></i>
+    </button>
+
+    <div class="popup-content">
+        <div class="popup-panel">
+            <form method="POST" action="/login/">
+                {% csrf_token %}
+                <h2 class="popup-title">Register Free !</h2>
+
+                <div class="popup-field">
+                    <i class="ri-mail-line"></i>
+                    <input type="email" name="email" placeholder="Enter your e-mail" required>
+                </div>
+
+                <div class="popup-field">
+                    <i class="ri-lock-password-line"></i>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <button type="button" class="password-toggle" aria-label="Show password">
+                        <i class="ri-eye-line"></i>
+                    </button>
+                </div>
+
+                <div class="popup-actions">
+                    <button type="submit">Login</button>
+                    <a href="#" onclick="openOtpPopup(event)" class="popup-inline-link">Forgot your password?</a>
+                </div>
+
+                <div class="popup-divider">
+                    <span>Sign Up Using</span>
+                </div>
+
+                <div class="popup-socials" aria-label="Social sign up options">
+                    <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="social-pill social-google" aria-label="Google">
+                        <i class="ri-google-fill"></i>
+                    </a>
+                    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="social-pill social-facebook" aria-label="Facebook">
+                        <i class="ri-facebook-circle-fill"></i>
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="social-pill social-instagram" aria-label="Instagram">
+                        <i class="ri-instagram-fill"></i>
+                    </a>
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-pill social-twitter" aria-label="Twitter">
+                        <i class="ri-twitter-x-fill"></i>
+                    </a>
+                </div>
+
+                <p class="popup-switch-copy">
+                    Don't have an account?
+                    <button type="button" class="popup-text-button" onclick="openSignup()">Create New Account</button>
+                </p>
+            </form>
+        </div>
+
+        <div class="popup-visual popup-visual-register">
+            <img src="{% static 'images/register_image.png' %}" alt="Register illustration">
+        </div>
+    </div>
+</div>
+
+<!-- SIGNUP POPUP -->
+<div id="signupPopup" class="popup">
+    {% if page == 'home' and messages %}
+    <section class="flash-messages" aria-live="polite">
+        {% for message in messages %}
+            <div class="flash-message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+    <button type="button" class="popup-close" onclick="closeSignup()" aria-label="Close signup popup">
+        <i class="ri-close-line"></i>
+    </button>
+
+    <div class="popup-content">
+        <div class="popup-panel">
+            <form method="POST" action="/signup/">
+                {% csrf_token %}
+                <h2 class="popup-title">Sign Up</h2>
+
+                <div class="popup-field">
+                    <i class="ri-user-3-line"></i>
+                    <input type="text" name="name" required minlength="3" maxlength="20" pattern="[A-Za-z][A-Za-z\s]{2,19}" title="Name must contain letters only" placeholder="Full Name">
+                </div>
+
+                <div class="popup-field">
+                    <i class="ri-mail-line"></i>
+                    <input type="email" name="email" required maxlength="30" pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" placeholder="Email">
+                </div>
+
+                <div class="popup-field">
+                    <i class="ri-lock-password-line"></i>
+                    <input type="password" name="password" required minlength="6" maxlength="20" placeholder="Password">
+                    <button type="button" class="password-toggle" aria-label="Show password">
+                        <i class="ri-eye-line"></i>
+                    </button>
+                </div>
+
+                <button type="submit">Sign Up</button>
+
+                <p class="popup-switch-copy">
+                    Already have an account?
+                    <button type="button" class="popup-text-button" onclick="openRegister()">Log in</button>
+                </p>
+            </form>
+        </div>
+
+        <div class="popup-visual popup-visual-signup">
+            <img src="{% static 'images/signup_image.png' %}" alt="Signup illustration">
+        </div>
+    </div>
+</div>
+
+<div id="otpPopup" class="popup otp-popup">
+    <button type="button" class="popup-close" onclick="closeOtpPopup()" aria-label="Close forgot password popup">
+        <i class="ri-close-line"></i>
+    </button>
+
+        <div class="popup-content otp-popup-content">
+        <div class="popup-panel otp-popup-panel">
+            <h2 class="popup-title">Forgot Password</h2>
+            <p class="otp-copy">We will send an OTP to your registered email address.</p>
+
+            <div class="popup-field">
+                <i class="ri-mail-line"></i>
+                <input type="email" id="otpEmail" placeholder="Enter Email" required>
+            </div>
+
+            <button type="button" class="otp-action" onclick="sendOtp()">Send OTP</button>
+
+            <div class="popup-field">
+                <i class="ri-shield-keyhole-line"></i>
+                <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" inputmode="numeric" pattern="[0-9]*">
+            </div>
+
+            <button type="button" class="otp-action otp-action-secondary" onclick="verifyOtp()">Verify OTP</button>
+            <p id="otpStatus" class="otp-status" aria-live="polite"></p>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <div class="footer-logo">Paynow</div>
+        </div>
+
+        <div class="footer-column">
+            <h4>Home</h4>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="/contact/">Contact</a>
+            <a href="/about/">About us</a>
+            <a href="/faq/">FAQ</a>
+        </div>
+
+        <div class="footer-column">
+            <h4>Services</h4>
+            <a href="/dashboard/">Link Bank Account</a>
+            <a href="/dashboard/send-money/">Send Money</a>
+            <a href="/dashboard/request-money/">Request Money</a>
+            <a href="/dashboard/view-qr/">View QR Code</a>
+        </div>
+
+        <div class="footer-column">
+            <h4>Follow Us</h4>
+            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer"><i class="ri-facebook-circle-fill"></i><span>Facebook</span></a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer"><i class="ri-twitter-x-fill"></i><span>Twitter (X)</span></a>
+            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer"><i class="ri-instagram-fill"></i><span>Instagram</span></a>
+            <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer"><i class="ri-youtube-fill"></i><span>YouTube</span></a>
+        </div>
+
+        <div class="footer-column footer-support">
+            <h4>Customer Support :</h4>
+            <p><i class="ri-mail-line"></i><span>support@upipay.in</span></p>
+            <p><i class="ri-phone-line"></i><span>+91 1800-202-2020</span></p>
+            <p><i class="ri-building-line"></i><span>UPI Pay Technologies Pvt. Ltd.</span></p>
+            <p><i class="ri-map-pin-fill"></i><span>#45, Tech Park, Bengaluru, India</span></p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 Paynow. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="{% static 'js/home.js' %}"></script>
+{% block extra_scripts %}{% endblock %}
+
+</body>
+</html>
